@@ -2,8 +2,6 @@
 #include <cmath>
 using namespace std;
 
-// === DECLARACIÓN DE CLASES BÁSICAS ===
-
 class Cuadrado {
 public:
     double lado = 0;
@@ -22,12 +20,16 @@ public:
     double lado = 0;
     double altura = 0;
 
+    double getLado() {
+        return lado;
+    }
+
     double calcularArea() {
-        return (lado * altura) / 2.0; // Corregido para usar lado (base) y altura
+        return (base * altura) / 2;
     }
 
     double calcularPerimetro() {
-        return lado * 3; // Asumiendo triángulo equilátero
+        return base * 3; // Triángulo equilátero
     }
 };
 
@@ -59,19 +61,18 @@ public:
     }
 };
 
-class Trapecio {
+class Pentagono {
 public:
     double baseMayor = 0;
     double baseMenor = 0;
     double altura = 0;
 
     double calcularArea() {
-        return ((baseMayor + baseMenor) / 2.0) * altura;
+        return (5 * lado * apotema) / 2;
     }
 
     double calcularPerimetro() {
-        double ladoNoParalelo = sqrt(pow((baseMayor - baseMenor) / 2.0, 2) + pow(altura, 2));
-        return baseMayor + baseMenor + 2 * ladoNoParalelo;
+        return 5 * lado;
     }
 };
 
@@ -83,39 +84,95 @@ public:
         return 6 * lado * lado;
     }
 
-    double calcularVolumen() {
-        return lado * lado * lado;
+    double calcularPerimetro() {
+        return 6 * lado;
     }
 };
- class Piramide{
- public:
-    double base = 0;
-    double altura = 0;
+
+class Heptagono {
+public:
+    double lado = 0;
+    double apotema = 0;
 
     double calcularArea() {
-        double apotema = sqrt(pow((base / 2.0), 2) + pow(altura, 2));
-        return (base * base) + (2 * base * apotema);
+        return (7 * lado * apotema) / 2;
     }
 
-    double calcularVolumen() {
-        return (base * base * altura) / 3.0;
+    double calcularPerimetro() {
+        return 7 * lado;
     }
- };2
-// === FUNCIÓN PRINCIPAL ===
+};
 
+class Octagono {
+public:
+    double lado = 0;
+
+    double calcularArea() {
+        return 2 * (1 + sqrt(2)) * lado * lado;
+    }
+
+    double calcularPerimetro() {
+        return 8 * lado;
+    }
+}; 
+class Nonagono {
+public:
+    double lado = 0;
+    double apotema = 0;
+
+    double calcularArea() {
+        return (9 * lado * apotema) / 2;
+    }
+
+    double calcularPerimetro() {
+        return 9 * lado;
+    }
+};
+
+class Decagono {
+public:
+    double lado = 0;
+    double apotema = 0;
+
+    double calcularArea() {
+        return (10 * lado * apotema) / 2;
+    }
+
+    double calcularPerimetro() {
+        return 10 * lado;
+    }
+};
+
+class Icosagono {
+public:
+    double lado = 0;
+    double apotema = 0;
+
+    double calcularArea() {
+        return (20 * lado * apotema) / 2;
+    }
+
+    double calcularPerimetro() {
+        return 20 * lado;
+    }
+};
 int main() {
     int opcionPrincipal;
     int opcion2D;
-    int opcion3D;
-    int opcionCuadrado, opcionTriangulo, opcionCirculo, opcionRectangulo, opcionTrapecio, opcionCubo, opcionPiramide;
+    int opcionCuadrado;
+    int opcionTriangulo; 
 
     Cuadrado miCuadrado;
     Triangulo miTriangulo;
     Circulo miCirculo;
     Rectangulo miRectangulo;
-    Trapecio miTrapecio;
-    Cubo miCubo;
-    Piramide miPiramide;
+    Pentagono miPentagono;
+    Hexagono miHexagono;
+    Heptagono miHeptagono;
+    Octagono miOctagono;
+    Nonagono miNonagono;
+    Decagono miDecagono;
+    Icosagono miIcosagono;
     do {
         cout << "\n=== MENU PRINCIPAL ===" << endl;
         cout << "1. Figuras 2D" << endl;
@@ -144,149 +201,210 @@ int main() {
                                 cout << "1. Calcular Area\n2. Calcular Perimetro\n3. Dibujar\n4. Ingresar Lado\n5. Resumen\n6. Regresar\nOpcion: ";
                                 cin >> opcionCuadrado;
                                 switch (opcionCuadrado) {
-                                    case 1: cout << (miCuadrado.lado <= 0 ? "Lado invalido." : "Area: " + to_string(miCuadrado.calcularArea())) << endl; break;
-                                    case 2: cout << (miCuadrado.lado <= 0 ? "Lado invalido." : "Perimetro: " + to_string(miCuadrado.calcularPerimetro())) << endl; break;
-                                    case 3:
-                                        if (miCuadrado.lado <= 0) cout << "Lado invalido." << endl;
-                                        else {
-                                            for (int i = 0; i < (int)miCuadrado.lado; i++) {
-                                                for (int j = 0; j < (int)miCuadrado.lado; j++) cout << "* ";
+                                    case 1:
+                                        if (miCuadrado.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "El Area del cuadrado es: " << miCuadrado.calcularArea() << endl;
+                                        }
+                                        break;
+                                        
+                                    case 2:
+                                        if (miCuadrado.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "El Perimetro del cuadrado es: " << miCuadrado.calcularPerimetro() << endl;
+                                        }
+                                        break;
+                                        
+                                    case 3: // Dibujar
+                                        if (miCuadrado.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "\n";
+                                            for (int i = 0; i < static_cast<int>(miCuadrado.lado); i++) {   //busca que es static_cast
+                                                for (int j = 0; j < static_cast<int>(miCuadrado.lado); j++) {
+                                                    cout << "* ";
+                                                }
                                                 cout << endl;
                                             }
                                         }
                                         break;
-                                    case 4: cout << "Ingrese lado: "; cin >> miCuadrado.lado; break;
-                                    case 5: cout << "Lado: " << miCuadrado.lado << " | Area: " << miCuadrado.calcularArea() << " | Perimetro: " << miCuadrado.calcularPerimetro() << endl; break;
+                                    
+                                    case 4:
+                                            cout << "Introduce el valor del lado: ";
+                                            cin >> miCuadrado.lado;
+                                            cout << "¡Lado actualizado con exito!" << endl;
+                                            break;
+                                        
+                                    case 5:
+                                        if (miCuadrado.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "\n=== RESUMEN DEL CUADRADO ===" << endl;
+                                            cout << "Lado: " << miCuadrado.lado << endl;
+                                            cout << "Area: " << miCuadrado.calcularArea() << endl;
+                                            cout << "Perimetro: " << miCuadrado.calcularPerimetro() << endl;
+                                        }
+                                        break;
+                                    
+                                    case 6:
+                                        cout << "Regresando al submenu de Figuras 2D..." << endl;
+                                        break;
+                                    
+                                    default:
+                                        cout << "Opcion no valida. Intenta de nuevo." << endl;
+                                        break;
                                 }
                             } while (opcionCuadrado != 6);
                             break;
 
-                        case 2: // TRIANGULO
-                            do {
-                                cout << "\n--- MENU TRIANGULO ---\n1. Area\n2. Perimetro\n3. Dibujar\n4. Ingresar Datos\n5. Resumen\n6. Regresar\nOpcion: ";
+                        case 2: 
+                            do { // --- TRIÁNGULO ---
+                                cout << "\n--- MENU TRIANGULO ---" << endl;
+                                cout << "1. Calcular y mostrar Area" << endl;
+                                cout << "2. Calcular y mostrar Perimetro" << endl;
+                                cout << "3. Dibujar" << endl;
+                                cout << "4. Ingresar / Cambiar el lado del triangulo" << endl;
+                                cout << "5. Resumen (Opciones 1, 2 y 3)" << endl;
+                                cout << "6. Regresar al submenu de Figuras 2D" << endl;
+                                cout << "Selecciona una opcion: ";
                                 cin >> opcionTriangulo;
-                                switch (opcionTriangulo) {
-                                    case 1: cout << "Area: " << miTriangulo.calcularArea() << endl; break;
-                                    case 2: cout << "Perimetro: " << miTriangulo.calcularPerimetro() << endl; break;
-                                    case 3:
-                                        for (int i = 0; i < (int)miTriangulo.lado; i++) {
-                                            for (int j = 0; j <= i; j++) cout << "* ";
-                                            cout << endl;
-                                        }
-                                        break;
-                                    case 4: 
-                                        cout << "Base/Lado: "; cin >> miTriangulo.lado;
-                                        cout << "Altura: "; cin >> miTriangulo.altura;
-                                        break;
-                                    case 5: cout << "Area: " << miTriangulo.calcularArea() << " | Perimetro: " << miTriangulo.calcularPerimetro() << endl; break;
-                                }
                             } while (opcionTriangulo != 6);
                             break;
-
-                        case 3: // CÍRCULO
-                            do {
-                                cout << "\n--- MENU CIRCULO ---\n1. Area\n2. Perimetro\n3. Dibujar\n4. Ingresar Radio\n5. Resumen\n6. Regresar\nOpcion: ";
-                                cin >> opcionCirculo;
-                                switch (opcionCirculo) {
-                                    case 1: cout << "Area: " << miCirculo.calcularArea() << endl; break;
-                                    case 2: cout << "Perimetro: " << miCirculo.calcularPerimetro() << endl; break;
-                                    case 3: {
-                                        int r = (int)round(miCirculo.radio);
-                                        for (int y = -r; y <= r; y++) {
-                                            for (int x = -r; x <= r; x++) {
-                                                cout << (x*x + y*y <= r*r ? "* " : "  ");
-                                            }
-                                            cout << endl;
+                            switch (opcionTriangulo)
+                            {
+                                    case 1:
+                                    if (miTriangulo.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "El Area del triangulo es: " << miTriangulo.calcularArea() << endl;
                                         }
+                                        break;
+                                        
+                                    case 2:
+                                        if (miTriangulo.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "El Perimetro del triangulo es: " << miTriangulo.calcularPerimetro() << endl;
+                                        }
+                                        break;
+                                    case 3:
+                                        if (miTriangulo.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "\n";
+                                            for (int i = 0; i < static_cast<int>(miTriangulo.lado); i++) {
+                                                for (int j = 0; j < static_cast<int>(miTriangulo.lado); j++) {
+                                                    cout << "* ";
+                                                }
+                                                cout << endl;
+                                            }
+                                        }
+                                        break;
+
+                                    case 4:
+                                        cout << "Introduce el valor del lado: ";
+                                        cin >> miTriangulo.lado;
+                                        cout << "¡Lado actualizado con exito!" << endl;
+                                        break;
+                                    case 5:
+                                        if (miTriangulo.lado <= 0) {
+                                            cout << "Primero debes ingresar un lado valido (Opcion 4)." << endl;
+                                        } else {
+                                            cout << "\n=== RESUMEN DEL TRIANGULO ===" << endl;
+                                            cout << "Lado: " << miTriangulo.lado << endl;
+                                            cout << "Area: " << miTriangulo.calcularArea() << endl;
+                                            cout << "Perimetro: " << miTriangulo.calcularPerimetro() << endl;
+                                        }
+                                        break;
+                                    case 6:
+                                        cout << "Regresando al submenu de Figuras 2D..." << endl;
+                                        break;
+                                    
+                                    default:
+                                        cout << "Opcion no valida. Intenta de nuevo." << endl;
+                                        break;    
+
+                                    default:
                                         break;
                                     }
-                                    case 4: cout << "Radio: "; cin >> miCirculo.radio; break;
-                                    case 5: cout << "Area: " << miCirculo.calcularArea() << " | Perimetro: " << miCirculo.calcularPerimetro() << endl; break;
-                                }
-                            } while (opcionCirculo != 6);
+                        case 3: { // --- CÍRCULO ---
+                            Circulo miCirculo;
+                            cout << "\nIntroduce el radio del circulo: ";
+                            cin >> miCirculo.radio;
+                            cout << "Area: " << miCirculo.calcularArea() << endl;
+                            cout << "Perimetro: " << miCirculo.calcularPerimetro() << endl;
+                            break;
+                        }
+
+                        case 4: { // --- RECTÁNGULO ---
+                            Rectangulo miRectangulo;
+                            cout << "\nIntroduce la base: ";
+                            cin >> miRectangulo.base;
+                            cout << "Introduce la altura: ";
+                            cin >> miRectangulo.altura;
+                            cout << "Area: " << miRectangulo.calcularArea() << endl;
+                            cout << "Perimetro: " << miRectangulo.calcularPerimetro() << endl;
+                            break;
+                        }
+
+                        case 5: { // --- PENTÁGONO ---
+                            Pentagono miPentagono;
+                            cout << "\nIntroduce el lado: ";
+                            cin >> miPentagono.lado;
+                            cout << "Introduce la apotema: ";
+                            cin >> miPentagono.apotema;
+                            cout << "Area: " << miPentagono.calcularArea() << endl;
+                            cout << "Perimetro: " << miPentagono.calcularPerimetro() << endl;
+                            break;
+                        }
+
+                        case 6: { // --- HEXÁGONO ---
+                            Hexagono miHexagono;
+                            cout << "\nIntroduce el lado: ";
+                            cin >> miHexagono.lado;
+                            cout << "Area: " << miHexagono.calcularArea() << endl;
+                            cout << "Perimetro: " << miHexagono.calcularPerimetro() << endl;
+                            break;
+                        }
+
+                        case 7: { // --- HEPTÁGONO ---
+                            Heptagono miHeptagono;
+                            cout << "\nIntroduce el lado: ";
+                            cin >> miHeptagono.lado;
+                            cout << "Introduce la apotema: ";
+                            cin >> miHeptagono.apotema;
+                            cout << "Area: " << miHeptagono.calcularArea() << endl;
+                            cout << "Perimetro: " << miHeptagono.calcularPerimetro() << endl;
+                            break;
+                        }
+
+                        case 0:
+                            cout << "Regresando al Menu Principal..." << endl;
                             break;
 
-                        case 4: // RECTÁNGULO
-                            do {
-                                cout << "\n--- MENU RECTANGULO ---\n1. Area\n2. Perimetro\n3. Dibujar\n4. Ingresar Datos\n5. Resumen\n6. Regresar\nOpcion: ";
-                                cin >> opcionRectangulo;
-                                switch (opcionRectangulo) {
-                                    case 1: cout << "Area: " << miRectangulo.calcularArea() << endl; break;
-                                    case 2: cout << "Perimetro: " << miRectangulo.calcularPerimetro() << endl; break;
-                                    case 3:
-                                        for (int i = 0; i < (int)miRectangulo.altura; i++) {
-                                            for (int j = 0; j < (int)miRectangulo.base; j++) cout << "* ";
-                                            cout << endl;
-                                        }
-                                        break;
-                                    case 4:
-                                        cout << "Base: "; cin >> miRectangulo.base;
-                                        cout << "Altura: "; cin >> miRectangulo.altura;
-                                        break;
-                                    case 5: cout << "Area: " << miRectangulo.calcularArea() << " | Perimetro: " << miRectangulo.calcularPerimetro() << endl; break;
-                                }
-                            } while (opcionRectangulo != 6);
-                            break;
-
-                        case 5: // TRAPECIO
-                            do {
-                                cout << "\n--- MENU TRAPECIO ---\n1. Area\n2. Perimetro\n3. Ingresar Datos\n4. Resumen\n5. Regresar\nOpcion: ";
-                                cin >> opcionTrapecio;
-                                switch (opcionTrapecio) {
-                                    case 1: cout << "Area: " << miTrapecio.calcularArea() << endl; break;
-                                    case 2: cout << "Perimetro: " << miTrapecio.calcularPerimetro() << endl; break;
-                                    case 3:
-                                        cout << "Base Mayor: "; cin >> miTrapecio.baseMayor;
-                                        cout << "Base Menor: "; cin >> miTrapecio.baseMenor;
-                                        cout << "Altura: "; cin >> miTrapecio.altura;
-                                        break;
-                                    case 4: cout << "Area: " << miTrapecio.calcularArea() << " | Perimetro: " << miTrapecio.calcularPerimetro() << endl; break;
-                                }
-                            } while (opcionTrapecio != 5);
+                        default:
+                            cout << "Opcion no valida. Intenta de nuevo." << endl;
                             break;
                     }
-                } while (opcion2D != 0);
+                } while (opcion2D != 0); // Modificado a 0 para coincidir con la opción del menú
                 break;
 
             case 2: // --- FIGURAS 3D ---
-                do {
-                    cout << "\n--- FIGURAS 3D ---\n1. Cubo\n2. Piramide\n0. Regresar\nOpcion: ";
-                    cin >> opcion3D;
-                    if (opcion3D == 1) {
-                        do {
-                            cout << "\n--- MENU CUBO ---\n1. Area Superficial\n2. Volumen\n3. Ingresar Lado\n4. Resumen\n5. Regresar\nOpcion: ";
-                            cin >> opcionCubo;
-                            switch (opcionCubo) {
-                                case 1: cout << "Area: " << miCubo.calcularArea() << endl; break;
-                                case 2: cout << "Volumen: " << miCubo.calcularVolumen() << endl; break;
-                                case 3: cout << "Lado: "; cin >> miCubo.lado; break;
-                                case 4: cout << "Area: " << miCubo.calcularArea() << " | Volumen: " << miCubo.calcularVolumen() << endl; break;
-                            }
-                        } while (opcionCubo != 5);
-                    }
-                    else if (opcion3D == 2) {
-                        do {
-                            cout << "\n--- MENU PIRAMIDE ---\n1. Area Superficial\n2. Volumen\n3. Ingresar Datos\n4. Resumen\n5. Regresar\nOpcion: ";
-                            cin >> opcionPiramide;
-                            switch (opcionPiramide) {
-                                case 1: cout << "Area: " << miPiramide.calcularArea() << endl; break;
-                                case 2: cout << "Volumen: " << miPiramide.calcularVolumen() << endl; break;
-                                case 3: cout << "Base: "; cin >> miPiramide.base; cout << "Altura: "; cin >> miPiramide.altura; break;
-                                case 4: cout << "Area: " << miPiramide.calcularArea() << " | Volumen: " << miPiramide.calcularVolumen() << endl; break;
-                            }
-                        } while (opcionPiramide != 5);
-                    }
-                } while (opcion3D != 0);
+                cout << "\n--- FIGURAS 3D ---" << endl;
+                cout << "Seccion en construccion..." << endl;
                 break;
 
             case 3:
-                cout << "Saliendo del programa..." << endl;
+                cout << "¡Gracias por usar el programa! Saliendo..." << endl;
                 break;
 
             default:
                 cout << "Opcion invalida." << endl;
                 break;
         }
+
     } while (opcionPrincipal != 3);
 
     return 0;
