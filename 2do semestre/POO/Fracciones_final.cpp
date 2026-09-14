@@ -28,7 +28,7 @@ public:
         return a;
     }
 
-    // Método para simplificar la fracción
+    
     void simplificar()
     {
         int mcd = calcularMCD(numerador, denominador);
