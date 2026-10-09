@@ -147,13 +147,6 @@ public:
         Diagnostico = diag;
     }
 
-    void set_repuestos_utilizados(string repuesto) {
-        if (Total_repuestos < 20) {
-            Repuestos_utilizados[Total_repuestos] = repuesto;
-            Total_repuestos++;
-        }
-    }
-
     void set_horas_trabajadas(float horas) {
         Horas_trabajadas = horas;
     }
