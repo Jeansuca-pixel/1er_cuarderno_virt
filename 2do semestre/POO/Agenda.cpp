@@ -2,10 +2,13 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <cstdlib>  // para atoi (convierte texto a numero)
-#include <cctype>  // para tolower (pasa una letra a minuscula)
+#include <cstdlib>  // atoi
+#include <cstdio>   // sscanf
+#include <cctype>   // tolower
+#include <ctime>    // para obtener la fecha de hoy
 using namespace std;
 
 // ---------- Leer datos del teclado ----------
@@ -21,17 +24,61 @@ int leerNumero(string mensaje) {
     return atoi(leerTexto(mensaje).c_str());  // si no escriben un numero, da 0
 }
 
-// Pasa un texto a minusculas (para buscar sin importar mayusculas)
 string aMinusculas(string texto) {
     for (int i = 0; i < (int)texto.size(); i++) texto[i] = tolower(texto[i]);
     return texto;
 }
 
+// ---------- Clase Fecha (del diagrama) ----------
+
+class Fecha {
+private:
+    int dia, mes, anio;
+
+public:
+    Fecha() { dia = 0; mes = 0; anio = 0; }
+    Fecha(int d, int m, int a) { dia = d; mes = m; anio = a; }
+
+    int getDia() { return dia; }
+    int getMes() { return mes; }
+    int getAnio() { return anio; }
+
+    // Revisa que la fecha tenga sentido
+    bool esValida() {
+        return anio > 0 && mes >= 1 && mes <= 12 && dia >= 1 && dia <= 31;
+    }
+
+    // Convierte a texto dd/mm/aaaa
+    string aTexto() {
+        ostringstream s;
+        if (dia < 10) s << "0";
+        s << dia << "/";
+        if (mes < 10) s << "0";
+        s << mes << "/" << anio;
+        return s.str();
+    }
+
+    void imprimir() { cout << aTexto(); }
+
+    // Crea una fecha desde un texto "dd/mm/aaaa" (si falla, queda en 0/0/0)
+    static Fecha desdeTexto(string texto) {
+        int d = 0, m = 0, a = 0;
+        sscanf(texto.c_str(), "%d/%d/%d", &d, &m, &a);
+        return Fecha(d, m, a);
+    }
+
+    // Fecha de hoy
+    static Fecha hoy() {
+        time_t t = time(NULL);
+        tm* ahora = localtime(&t);
+        return Fecha(ahora->tm_mday, ahora->tm_mon + 1, ahora->tm_year + 1900);
+    }
+};
+
 // ---------- Clase Evento (clase padre) ----------
-// Guarda lo que tienen en comun las clases, los examenes y las tareas
 
 class Evento {
-protected:  // las clases hijas pueden usar estos datos
+protected:
     string titulo, curso, fecha, hora;
 
 public:
@@ -46,7 +93,6 @@ public:
 
     string getFecha() { return fecha; }
 
-    // Cada hijo cambia estas funciones a su manera
     virtual bool completar() { return false; }  // solo las tareas se pueden completar
 
     virtual void mostrar() {
@@ -72,7 +118,7 @@ public:
 
     void mostrar() {
         cout << "[CLASE]  ";
-        Evento::mostrar();  // usa lo que ya hace el padre
+        Evento::mostrar();
         cout << "         Aula: " << aula << " | Docente: " << docente << endl;
     }
 
@@ -88,7 +134,7 @@ public:
 class Examen : public Evento {
 private:
     string temas;
-    int peso;  // porcentaje de la nota final
+    int peso;
 
 public:
     Examen(string t, string c, string f, string h, string tm, int p) : Evento(t, c, f, h) {
@@ -151,11 +197,11 @@ public:
 
 class Agenda {
 private:
-    vector<Evento*> eventos;  // lista de eventos (clases, examenes y tareas)
+    vector<Evento*> eventos;
 
 public:
     ~Agenda() {
-        for (int i = 0; i < cantidad(); i++) delete eventos[i];  // libera la memoria
+        for (int i = 0; i < cantidad(); i++) delete eventos[i];
     }
 
     int cantidad() { return eventos.size(); }
@@ -187,7 +233,7 @@ public:
 
     bool completarTarea(int numero) {
         if (numero < 1 || numero > cantidad()) return false;
-        return eventos[numero - 1]->completar();  // da false si no es una tarea
+        return eventos[numero - 1]->completar();
     }
 
     bool eliminar(int numero) {
@@ -205,7 +251,7 @@ public:
     void cargar(string nombreArchivo) {
         ifstream archivo(nombreArchivo.c_str());
         string tipo;
-        while (getline(archivo, tipo)) {  // lee el tipo de cada evento guardado
+        while (getline(archivo, tipo)) {
             string titulo, curso, fecha, hora;
             getline(archivo, titulo);
             getline(archivo, curso);
@@ -232,45 +278,102 @@ public:
     }
 };
 
-// ---------- Clase Contacto ----------
+// ---------- Clase Contacto (segun el diagrama) ----------
 
 class Contacto {
-private:  // los datos estan protegidos: solo se cambian con las funciones de abajo
-    string nombre, rol, telefono, correo;
+private:
+    vector<string> numeros;  // Numeros -> string[]
+    string nombre;
+    string correo;
+    string direccion;
+    bool bloqueado;
+    bool eliminado;
+    Fecha nacimiento;        // Fecha de nacimiento -> Fecha
 
 public:
-    Contacto(string n, string r, string t, string c) {
+    Contacto(string n, vector<string> nums, string c, string d, Fecha f) {
         nombre = n;
-        rol = r;
-        telefono = t;
+        numeros = nums;
         correo = c;
+        direccion = d;
+        nacimiento = f;
+        bloqueado = false;
+        eliminado = false;
     }
 
+    // Getters
     string getNombre() { return nombre; }
-    string getRol() { return rol; }
-    string getTelefono() { return telefono; }
-    string getCorreo() { return correo; }
+    bool estaBloqueado() { return bloqueado; }
+    bool estaEliminado() { return eliminado; }
 
+    // Setters (para editar)
     void setNombre(string n) { nombre = n; }
-    void setRol(string r) { rol = r; }
-    void setTelefono(string t) { telefono = t; }
+    void setNumeros(vector<string> n) { numeros = n; }
     void setCorreo(string c) { correo = c; }
+    void setDireccion(string d) { direccion = d; }
+    void setNacimiento(Fecha f) { nacimiento = f; }
+    void setBloqueado(bool b) { bloqueado = b; }
+    void setEliminado(bool e) { eliminado = e; }
+
+    void eliminar() { eliminado = true; }   // borrado logico
+    void bloquear() { bloqueado = true; }
+    void desbloquear() { bloqueado = false; }
+
+    int calcularEdad() {
+        Fecha hoy = Fecha::hoy();
+        int edad = hoy.getAnio() - nacimiento.getAnio();
+        if (hoy.getMes() < nacimiento.getMes() ||
+            (hoy.getMes() == nacimiento.getMes() && hoy.getDia() < nacimiento.getDia())) {
+            edad--;
+        }
+        return edad;
+    }
+
+    bool cumpleHoy() {
+        Fecha hoy = Fecha::hoy();
+        return nacimiento.getDia() == hoy.getDia() && nacimiento.getMes() == hoy.getMes();
+    }
 
     void mostrar() {
-        cout << nombre << " (" << rol << ")" << endl;
-        cout << "      Tel: " << telefono << " | Correo: " << correo << endl;
+        cout << nombre;
+        if (bloqueado) cout << "  [BLOQUEADO]";
+        cout << endl;
+
+        cout << "      Numeros: ";
+        for (int i = 0; i < (int)numeros.size(); i++) {
+            if (i > 0) cout << ", ";
+            cout << numeros[i];
+        }
+        cout << endl;
+        cout << "      Correo: " << correo << " | Direccion: " << direccion << endl;
+        cout << "      Nacimiento: ";
+        nacimiento.imprimir();
+        if (nacimiento.esValida()) cout << " (" << calcularEdad() << " anios)";
+        cout << endl;
     }
 
-    // Dice si el texto aparece en el nombre, el rol o el correo
+    // Buscar: el texto aparece en nombre, correo, direccion o algun numero
     bool coincide(string texto) {
         texto = aMinusculas(texto);
-        return aMinusculas(nombre).find(texto) != string::npos ||
-               aMinusculas(rol).find(texto) != string::npos ||
-               aMinusculas(correo).find(texto) != string::npos;
+        if (aMinusculas(nombre).find(texto) != string::npos) return true;
+        if (aMinusculas(correo).find(texto) != string::npos) return true;
+        if (aMinusculas(direccion).find(texto) != string::npos) return true;
+        for (int i = 0; i < (int)numeros.size(); i++) {
+            if (numeros[i].find(texto) != string::npos) return true;
+        }
+        return false;
     }
 
+    // Formato del archivo: 7 lineas por contacto (los numeros van separados por ;)
     void guardar(ofstream& archivo) {
-        archivo << nombre << endl << rol << endl << telefono << endl << correo << endl;
+        string linea = "";
+        for (int i = 0; i < (int)numeros.size(); i++) {
+            if (i > 0) linea += ";";
+            linea += numeros[i];
+        }
+        archivo << nombre << endl << linea << endl << correo << endl << direccion << endl
+                << nacimiento.aTexto() << endl << (bloqueado ? "1" : "0") << endl
+                << (eliminado ? "1" : "0") << endl;
     }
 };
 
@@ -283,22 +386,24 @@ private:
 public:
     int cantidad() { return contactos.size(); }
 
-    void agregar(Contacto c) { contactos.push_back(c); }
+    void registrar(Contacto c) { contactos.push_back(c); }
 
-    void mostrarTodos() {
-        if (cantidad() == 0) {
-            cout << "No hay contactos." << endl;
-            return;
-        }
+    // Los numeros no cambian aunque haya contactos eliminados
+    void listar() {
+        bool hay = false;
         for (int i = 0; i < cantidad(); i++) {
+            if (contactos[i].estaEliminado()) continue;
             cout << (i + 1) << ". ";
             contactos[i].mostrar();
+            hay = true;
         }
+        if (!hay) cout << "No hay contactos." << endl;
     }
 
     void buscar(string texto) {
         bool encontrado = false;
         for (int i = 0; i < cantidad(); i++) {
+            if (contactos[i].estaEliminado()) continue;
             if (contactos[i].coincide(texto)) {
                 cout << (i + 1) << ". ";
                 contactos[i].mostrar();
@@ -308,37 +413,87 @@ public:
         if (!encontrado) cout << "No se encontro ningun contacto." << endl;
     }
 
-    // Devuelve el contacto para poder editarlo (o NULL si no existe)
-    Contacto* obtener(int numero) {
-        if (numero < 1 || numero > cantidad()) return NULL;
-        return &contactos[numero - 1];
+    void listarCumpleaniosHoy() {
+        bool hay = false;
+        for (int i = 0; i < cantidad(); i++) {
+            if (contactos[i].estaEliminado()) continue;
+            if (contactos[i].cumpleHoy()) {
+                cout << (i + 1) << ". ";
+                contactos[i].mostrar();
+                hay = true;
+            }
+        }
+        if (!hay) cout << "Nadie cumple anios hoy." << endl;
     }
 
-    bool eliminar(int numero) {
-        if (numero < 1 || numero > cantidad()) return false;
-        contactos.erase(contactos.begin() + numero - 1);
-        return true;
+    // Devuelve el contacto para editarlo (o NULL si no existe o fue eliminado)
+    Contacto* obtener(int numero) {
+        if (numero < 1 || numero > cantidad()) return NULL;
+        if (contactos[numero - 1].estaEliminado()) return NULL;
+        return &contactos[numero - 1];
     }
 
     void guardar(string nombreArchivo) {
         ofstream archivo(nombreArchivo.c_str());
-        for (int i = 0; i < cantidad(); i++) contactos[i].guardar(archivo);
+        for (int i = 0; i < cantidad(); i++) {
+            if (!contactos[i].estaEliminado()) contactos[i].guardar(archivo);
+        }
     }
 
     void cargar(string nombreArchivo) {
         ifstream archivo(nombreArchivo.c_str());
-        string nombre, rol, telefono, correo;
+        string nombre, numerosTexto, correo, direccion, fecha, bloq, elim;
         while (getline(archivo, nombre)) {
-            getline(archivo, rol);
-            getline(archivo, telefono);
+            getline(archivo, numerosTexto);
             getline(archivo, correo);
-            agregar(Contacto(nombre, rol, telefono, correo));
+            getline(archivo, direccion);
+            getline(archivo, fecha);
+            getline(archivo, bloq);
+            getline(archivo, elim);
+
+            // separar los numeros por ;
+            vector<string> numeros;
+            string actual = "";
+            for (int i = 0; i < (int)numerosTexto.size(); i++) {
+                if (numerosTexto[i] == ';') {
+                    numeros.push_back(actual);
+                    actual = "";
+                } else {
+                    actual += numerosTexto[i];
+                }
+            }
+            if (actual != "") numeros.push_back(actual);
+
+            Contacto c(nombre, numeros, correo, direccion, Fecha::desdeTexto(fecha));
+            c.setBloqueado(bloq == "1");
+            c.setEliminado(elim == "1");
+            registrar(c);
         }
     }
 };
 
+// ---------- Funciones auxiliares para pedir datos de contacto ----------
+
+vector<string> leerNumeros() {
+    vector<string> numeros;
+    while (true) {
+        string n = leerTexto("Numero de telefono (vacio para terminar): ");
+        if (n == "") break;
+        numeros.push_back(n);
+    }
+    return numeros;
+}
+
+Fecha leerFecha(string mensaje) {
+    Fecha f = Fecha::desdeTexto(leerTexto(mensaje));
+    while (!f.esValida()) {
+        cout << "Fecha no valida. Use el formato dd/mm/aaaa." << endl;
+        f = Fecha::desdeTexto(leerTexto(mensaje));
+    }
+    return f;
+}
+
 // ---------- Menu de eventos ----------
-// Se recibe la agenda con & para trabajar con la agenda original
 
 void menuEventos(Agenda& agenda) {
     int opcion = -1;
@@ -398,32 +553,31 @@ void menuEventos(Agenda& agenda) {
     }
 }
 
-// ---------- Menu de contactos ----------
+// ---------- Menu de contactos (el mismo orden del diagrama) ----------
 
 void menuContactos(Libreta& libreta) {
     int opcion = -1;
     while (opcion != 0) {
         cout << "\n--- CONTACTOS ---" << endl;
-        cout << "1. Agregar contacto" << endl;
-        cout << "2. Ver todos los contactos" << endl;
-        cout << "3. Buscar contacto" << endl;
-        cout << "4. Editar contacto" << endl;
-        cout << "5. Eliminar contacto" << endl;
-        cout << "0. Volver" << endl;
+        cout << "1) Registrar nuevo contacto" << endl;
+        cout << "2) Editar contacto" << endl;
+        cout << "3) Listar contactos" << endl;
+        cout << "4) Eliminar contacto" << endl;
+        cout << "5) Bloquear / desbloquear contacto" << endl;
+        cout << "6) Buscar contacto" << endl;
+        cout << "7) Cumpleanios de hoy" << endl;
+        cout << "0) Volver" << endl;
         opcion = leerNumero("Opcion: ");
 
         if (opcion == 1) {
             string nombre = leerTexto("Nombre: ");
-            string rol = leerTexto("Rol (docente, companero, etc.): ");
-            string telefono = leerTexto("Telefono: ");
-            string correo = leerTexto("Correo: ");
-            libreta.agregar(Contacto(nombre, rol, telefono, correo));
-            cout << "Contacto agregado." << endl;
+            vector<string> numeros = leerNumeros();
+            string correo = leerTexto("Correo electronico: ");
+            string direccion = leerTexto("Direccion: ");
+            Fecha nac = leerFecha("Fecha de nacimiento (dd/mm/aaaa): ");
+            libreta.registrar(Contacto(nombre, numeros, correo, direccion, nac));
+            cout << "Contacto registrado." << endl;
         } else if (opcion == 2) {
-            libreta.mostrarTodos();
-        } else if (opcion == 3) {
-            libreta.buscar(leerTexto("Buscar: "));
-        } else if (opcion == 4) {
             int numero = leerNumero("Numero del contacto a editar: ");
             Contacto* c = libreta.obtener(numero);
             if (c == NULL) {
@@ -431,19 +585,49 @@ void menuContactos(Libreta& libreta) {
             } else {
                 cout << "(Si deja un dato vacio, no se cambia)" << endl;
                 string nombre = leerTexto("Nuevo nombre: ");
-                string rol = leerTexto("Nuevo rol: ");
-                string telefono = leerTexto("Nuevo telefono: ");
                 string correo = leerTexto("Nuevo correo: ");
+                string direccion = leerTexto("Nueva direccion: ");
+                string fecha = leerTexto("Nueva fecha de nacimiento (dd/mm/aaaa): ");
+                string cambiar = leerTexto("Cambiar numeros? (s/n): ");
+
                 if (nombre != "") c->setNombre(nombre);
-                if (rol != "") c->setRol(rol);
-                if (telefono != "") c->setTelefono(telefono);
                 if (correo != "") c->setCorreo(correo);
+                if (direccion != "") c->setDireccion(direccion);
+                if (fecha != "") {
+                    Fecha f = Fecha::desdeTexto(fecha);
+                    if (f.esValida()) c->setNacimiento(f);
+                    else cout << "Fecha no valida, no se cambio." << endl;
+                }
+                if (aMinusculas(cambiar) == "s") c->setNumeros(leerNumeros());
                 cout << "Contacto actualizado." << endl;
             }
-        } else if (opcion == 5) {
+        } else if (opcion == 3) {
+            libreta.listar();
+        } else if (opcion == 4) {
             int numero = leerNumero("Numero del contacto a eliminar: ");
-            if (libreta.eliminar(numero)) cout << "Contacto eliminado." << endl;
-            else cout << "No existe ese contacto." << endl;
+            Contacto* c = libreta.obtener(numero);
+            if (c == NULL) {
+                cout << "No existe ese contacto." << endl;
+            } else {
+                c->eliminar();
+                cout << "Contacto eliminado." << endl;
+            }
+        } else if (opcion == 5) {
+            int numero = leerNumero("Numero del contacto: ");
+            Contacto* c = libreta.obtener(numero);
+            if (c == NULL) {
+                cout << "No existe ese contacto." << endl;
+            } else if (c->estaBloqueado()) {
+                c->desbloquear();
+                cout << "Contacto desbloqueado." << endl;
+            } else {
+                c->bloquear();
+                cout << "Contacto bloqueado." << endl;
+            }
+        } else if (opcion == 6) {
+            libreta.buscar(leerTexto("Buscar: "));
+        } else if (opcion == 7) {
+            libreta.listarCumpleaniosHoy();
         } else if (opcion != 0) {
             cout << "Opcion no valida." << endl;
         }
@@ -456,7 +640,6 @@ int main() {
     Agenda agenda;
     Libreta libreta;
 
-    // Al empezar, lee lo que se guardo la ultima vez
     agenda.cargar("datos_eventos.txt");
     libreta.cargar("datos_contactos.txt");
 
