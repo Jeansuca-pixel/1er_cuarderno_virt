@@ -1,31 +1,49 @@
 //  AGENDA UNIVERSITARIA 
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <cstdlib>  // atoi
-#include <cstdio>   // sscanf
-#include <cctype>   // tolower
-#include <ctime>    // para obtener la fecha de hoy
-using namespace std;
+#include <iostream>   // escribir en pantalla y leer del teclado
+#include <fstream>    // guardar y leer archivos de texto
+#include <sstream>    // armar textos pegando pedacitos
+#include <string>     // trabajar con textos
+#include <vector>     // listas que crecen
+#include <cstdlib>    // atoi (texto a número) y exit (cerrar el programa)
+#include <cstdio>     // sscanf (sacar números de un texto)
+#include <cctype>     // tolower (a minúscula) e isdigit (¿es un dígito?)
+#include <ctime>      // para obtener la fecha de hoy
+using namespace std;  // nos ahorra escribir "std::" delante de todo
 
 // ---------- Leer datos del teclado ----------
 
 string leerTexto(string mensaje) {
     string texto;
     cout << mensaje;
-    getline(cin, texto);
+    if (!getline(cin, texto)) {                         // Si ya no se puede leer nada (se cerró la entrada)
+        cout << endl << "Entrada cerrada. Saliendo." << endl;
+        exit(0);                                        // cierra el programa para no quedar dando vueltas sin fin
+    }
     return texto;
 }
 
 int leerNumero(string mensaje) {
-    return atoi(leerTexto(mensaje).c_str());  // si no escriben un numero, da 0
+    string texto = leerTexto(mensaje);
+    if (texto.empty()) return -1;
+    for (int i = 0; i < (int)texto.size(); i++) {
+        if (!isdigit((unsigned char)texto[i])) return -1;   // apareció algo que no es dígito
+    }
+    return atoi(texto.c_str());
+}
+
+//  repite la pregunta hasta que el número esté dentro del rango permitido.
+int leerNumeroEntre(string mensaje, int minimo, int maximo) {
+    int n = leerNumero(mensaje);
+    while (n < minimo || n > maximo) {
+        cout << "Numero no valido. Debe estar entre " << minimo << " y " << maximo << "." << endl;
+        n = leerNumero(mensaje);
+    }
+    return n;
 }
 
 string aMinusculas(string texto) {
-    for (int i = 0; i < (int)texto.size(); i++) texto[i] = tolower(texto[i]);
+    for (int i = 0; i < (int)texto.size(); i++) texto[i] = tolower((unsigned char)texto[i]);
     return texto;
 }
 
@@ -44,14 +62,20 @@ public:
     int getAnio() { return anio; }
 
     // Revisa que la fecha tenga sentido
+    // revisa los días reales de cada mes y los años bisiestos.
     bool esValida() {
-        return anio > 0 && mes >= 1 && mes <= 12 && dia >= 1 && dia <= 31;
+        if (anio < 1 || mes < 1 || mes > 12 || dia < 1) return false;
+        int diasDelMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        bool bisiesto = (anio % 4 == 0 && anio % 100 != 0) || (anio % 400 == 0);
+        int maximo = diasDelMes[mes - 1];
+        if (mes == 2 && bisiesto) maximo = 29;
+        return dia <= maximo;
     }
 
     // Convierte a texto dd/mm/aaaa
     string aTexto() {
         ostringstream s;
-        if (dia < 10) s << "0";
+        if (dia < 10) s << "0";                         // pone un 0 delante si es de una cifra
         s << dia << "/";
         if (mes < 10) s << "0";
         s << mes << "/" << anio;
@@ -63,15 +87,15 @@ public:
     // Crea una fecha desde un texto "dd/mm/aaaa" (si falla, queda en 0/0/0)
     static Fecha desdeTexto(string texto) {
         int d = 0, m = 0, a = 0;
-        sscanf(texto.c_str(), "%d/%d/%d", &d, &m, &a);
+        sscanf(texto.c_str(), "%d/%d/%d", &d, &m, &a);  // saca los tres números separados por barras
         return Fecha(d, m, a);
     }
 
     // Fecha de hoy
     static Fecha hoy() {
-        time_t t = time(NULL);
+        time_t t = time(NULL);                          // pregunta al reloj de la computadora
         tm* ahora = localtime(&t);
-        return Fecha(ahora->tm_mday, ahora->tm_mon + 1, ahora->tm_year + 1900);
+        return Fecha(ahora->tm_mday, ahora->tm_mon + 1, ahora->tm_year + 1900);  // el mes cuenta desde 0 y el año desde 1900, por eso se suma
     }
 };
 
@@ -89,11 +113,11 @@ public:
         hora = h;
     }
 
-    virtual ~Evento() {}
+    virtual ~Evento() {}                                // permite que, al borrar un evento, se borre completo con lo propio de cada tipo
 
     string getFecha() { return fecha; }
 
-    virtual bool completar() { return false; }  // solo las tareas se pueden completar
+    virtual bool completar() { return false; }          // solo las tareas se pueden completar
 
     virtual void mostrar() {
         cout << titulo << " | " << fecha << " " << hora << " | Curso: " << curso << endl;
@@ -118,12 +142,12 @@ public:
 
     void mostrar() {
         cout << "[CLASE]  ";
-        Evento::mostrar();
+        Evento::mostrar();                              // primero los datos comunes
         cout << "         Aula: " << aula << " | Docente: " << docente << endl;
     }
 
     void guardar(ofstream& archivo) {
-        archivo << "CLASE" << endl;
+        archivo << "CLASE" << endl;                     // el tipo va primero, para saber qué leer al cargar
         Evento::guardar(archivo);
         archivo << aula << endl << docente << endl;
     }
@@ -137,8 +161,8 @@ private:
     int peso;
 
 public:
-    Examen(string t, string c, string f, string h, string tm, int p) : Evento(t, c, f, h) {
-        temas = tm;
+    Examen(string t, string c, string f, string h, string tem, int p) : Evento(t, c, f, h) {
+        temas = tem;
         peso = p;
     }
 
@@ -170,7 +194,7 @@ public:
 
     bool completar() {
         completada = true;
-        return true;
+        return true;                                    // avisa que sí se pudo
     }
 
     void mostrar() {
@@ -189,7 +213,7 @@ public:
     void guardar(ofstream& archivo) {
         archivo << "TAREA" << endl;
         Evento::guardar(archivo);
-        archivo << prioridad << endl << (completada ? "1" : "0") << endl;
+        archivo << prioridad << endl << (completada ? "1" : "0") << endl;   // 1 = hecha, 0 = pendiente
     }
 };
 
@@ -197,11 +221,11 @@ public:
 
 class Agenda {
 private:
-    vector<Evento*> eventos;
+    vector<Evento*> eventos;                            // clases, exámenes y tareas mezclados en una sola lista
 
 public:
-    ~Agenda() {
-        for (int i = 0; i < cantidad(); i++) delete eventos[i];
+    ~Agenda() {                                         // se ejecuta solo cuando el programa termina
+        for (int i = 0; i < cantidad(); i++) delete eventos[i];   // libera la memoria de cada evento
     }
 
     int cantidad() { return eventos.size(); }
@@ -214,7 +238,7 @@ public:
             return;
         }
         for (int i = 0; i < cantidad(); i++) {
-            cout << (i + 1) << ". ";
+            cout << (i + 1) << ". ";                    // el número de orden empieza en 1
             eventos[i]->mostrar();
         }
     }
@@ -233,23 +257,23 @@ public:
 
     bool completarTarea(int numero) {
         if (numero < 1 || numero > cantidad()) return false;
-        return eventos[numero - 1]->completar();
+        return eventos[numero - 1]->completar();        // solo funciona si ese evento es una tarea
     }
 
     bool eliminar(int numero) {
         if (numero < 1 || numero > cantidad()) return false;
-        delete eventos[numero - 1];
-        eventos.erase(eventos.begin() + numero - 1);
+        delete eventos[numero - 1];                     // libera la memoria
+        eventos.erase(eventos.begin() + numero - 1);    // lo quita de la lista
         return true;
     }
 
     void guardar(string nombreArchivo) {
         ofstream archivo(nombreArchivo.c_str());
-        for (int i = 0; i < cantidad(); i++) eventos[i]->guardar(archivo);
+        for (int i = 0; i < cantidad(); i++) eventos[i]->guardar(archivo);   // cada evento se escribe a sí mismo
     }
 
     void cargar(string nombreArchivo) {
-        ifstream archivo(nombreArchivo.c_str());
+        ifstream archivo(nombreArchivo.c_str());        // si el archivo no existe, simplemente no lee nada
         string tipo;
         while (getline(archivo, tipo)) {
             string titulo, curso, fecha, hora;
@@ -315,7 +339,7 @@ public:
     void setBloqueado(bool b) { bloqueado = b; }
     void setEliminado(bool e) { eliminado = e; }
 
-    void eliminar() { eliminado = true; }   // borrado logico
+    void eliminar() { eliminado = true; }   // borrado logico: no se destruye, solo se esconde
     void bloquear() { bloqueado = true; }
     void desbloquear() { bloqueado = false; }
 
@@ -324,7 +348,7 @@ public:
         int edad = hoy.getAnio() - nacimiento.getAnio();
         if (hoy.getMes() < nacimiento.getMes() ||
             (hoy.getMes() == nacimiento.getMes() && hoy.getDia() < nacimiento.getDia())) {
-            edad--;
+            edad--;                                     // todavía no cumplió años este año
         }
         return edad;
     }
@@ -354,7 +378,7 @@ public:
 
     // Buscar: el texto aparece en nombre, correo, direccion o algun numero
     bool coincide(string texto) {
-        texto = aMinusculas(texto);
+        texto = aMinusculas(texto);                     // así no importa si escribe mayúsculas o minúsculas
         if (aMinusculas(nombre).find(texto) != string::npos) return true;
         if (aMinusculas(correo).find(texto) != string::npos) return true;
         if (aMinusculas(direccion).find(texto) != string::npos) return true;
@@ -392,7 +416,7 @@ public:
     void listar() {
         bool hay = false;
         for (int i = 0; i < cantidad(); i++) {
-            if (contactos[i].estaEliminado()) continue;
+            if (contactos[i].estaEliminado()) continue; // los borrados se saltan
             cout << (i + 1) << ". ";
             contactos[i].mostrar();
             hay = true;
@@ -430,13 +454,13 @@ public:
     Contacto* obtener(int numero) {
         if (numero < 1 || numero > cantidad()) return NULL;
         if (contactos[numero - 1].estaEliminado()) return NULL;
-        return &contactos[numero - 1];
+        return &contactos[numero - 1];                  // devuelve "la dirección" del contacto, no una copia, para poder modificarlo
     }
 
     void guardar(string nombreArchivo) {
         ofstream archivo(nombreArchivo.c_str());
         for (int i = 0; i < cantidad(); i++) {
-            if (!contactos[i].estaEliminado()) contactos[i].guardar(archivo);
+            if (!contactos[i].estaEliminado()) contactos[i].guardar(archivo);   // los borrados no se guardan
         }
     }
 
@@ -453,7 +477,7 @@ public:
 
             // separar los numeros por ;
             vector<string> numeros;
-            string actual = "";
+            string actual = "";                         // el teléfono que se está armando
             for (int i = 0; i < (int)numerosTexto.size(); i++) {
                 if (numerosTexto[i] == ';') {
                     numeros.push_back(actual);
@@ -462,7 +486,7 @@ public:
                     actual += numerosTexto[i];
                 }
             }
-            if (actual != "") numeros.push_back(actual);
+            if (actual != "") numeros.push_back(actual);   // guarda el último teléfono
 
             Contacto c(nombre, numeros, correo, direccion, Fecha::desdeTexto(fecha));
             c.setBloqueado(bloq == "1");
@@ -512,7 +536,7 @@ void menuEventos(Agenda& agenda) {
         if (opcion == 1) {
             string titulo = leerTexto("Titulo: ");
             string curso = leerTexto("Curso: ");
-            string fecha = leerTexto("Fecha (dd/mm/aaaa): ");
+            string fecha = leerFecha("Fecha (dd/mm/aaaa): ").aTexto();   // la fecha se revisa y se guarda siempre con el mismo formato
             string hora = leerTexto("Hora (hh:mm): ");
             string aula = leerTexto("Aula: ");
             string docente = leerTexto("Docente: ");
@@ -521,24 +545,24 @@ void menuEventos(Agenda& agenda) {
         } else if (opcion == 2) {
             string titulo = leerTexto("Titulo: ");
             string curso = leerTexto("Curso: ");
-            string fecha = leerTexto("Fecha (dd/mm/aaaa): ");
+            string fecha = leerFecha("Fecha (dd/mm/aaaa): ").aTexto();   
             string hora = leerTexto("Hora (hh:mm): ");
             string temas = leerTexto("Temas: ");
-            int peso = leerNumero("Peso en la nota final (%): ");
+            int peso = leerNumeroEntre("Peso en la nota final (%): ", 0, 100);   //  solo acepta de 0 a 100
             agenda.agregar(new Examen(titulo, curso, fecha, hora, temas, peso));
             cout << "Examen agregado." << endl;
         } else if (opcion == 3) {
             string titulo = leerTexto("Titulo: ");
             string curso = leerTexto("Curso: ");
-            string fecha = leerTexto("Fecha (dd/mm/aaaa): ");
+            string fecha = leerFecha("Fecha (dd/mm/aaaa): ").aTexto();   
             string hora = leerTexto("Hora (hh:mm): ");
-            int prioridad = leerNumero("Prioridad (1=Alta, 2=Media, 3=Baja): ");
-            agenda.agregar(new Tarea(titulo, curso, fecha, hora, prioridad, false));
+            int prioridad = leerNumeroEntre("Prioridad (1=Alta, 2=Media, 3=Baja): ", 1, 3);   //  solo acepta 1, 2 o 3
+            agenda.agregar(new Tarea(titulo, curso, fecha, hora, prioridad, false));   // false = empieza pendiente
             cout << "Tarea agregada." << endl;
         } else if (opcion == 4) {
             agenda.mostrarTodos();
         } else if (opcion == 5) {
-            agenda.mostrarPorFecha(leerTexto("Fecha (dd/mm/aaaa): "));
+            agenda.mostrarPorFecha(leerFecha("Fecha (dd/mm/aaaa): ").aTexto());   //  así "5/3/2026" encuentra "05/03/2026"
         } else if (opcion == 6) {
             int numero = leerNumero("Numero de la tarea: ");
             if (agenda.completarTarea(numero)) cout << "Tarea completada." << endl;
@@ -617,7 +641,7 @@ void menuContactos(Libreta& libreta) {
             Contacto* c = libreta.obtener(numero);
             if (c == NULL) {
                 cout << "No existe ese contacto." << endl;
-            } else if (c->estaBloqueado()) {
+            } else if (c->estaBloqueado()) {            // si ya estaba bloqueado, lo desbloquea; si no, lo bloquea
                 c->desbloquear();
                 cout << "Contacto desbloqueado." << endl;
             } else {
@@ -640,7 +664,7 @@ int main() {
     Agenda agenda;
     Libreta libreta;
 
-    agenda.cargar("datos_eventos.txt");
+    agenda.cargar("datos_eventos.txt");                 // trae lo guardado la vez anterior
     libreta.cargar("datos_contactos.txt");
 
     int opcion = -1;
@@ -656,7 +680,7 @@ int main() {
             menuEventos(agenda);
         } else if (opcion == 2) {
             menuContactos(libreta);
-        } else if (opcion == 3 || opcion == 0) {
+        } else if (opcion == 3 || opcion == 0) {        // la opción 0 también guarda antes de salir
             agenda.guardar("datos_eventos.txt");
             libreta.guardar("datos_contactos.txt");
             cout << "Datos guardados." << endl;
@@ -667,4 +691,4 @@ int main() {
 
     cout << "Hasta pronto!" << endl;
     return 0;
-}
+}  
