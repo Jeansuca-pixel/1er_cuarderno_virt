@@ -1,16 +1,4 @@
-// ============================================================================
-//  TECH STORE - version refactorizada con principios SOLID
-//
-//  Capas del programa (de adentro hacia afuera):
-//    1. Utilidades de consola y validacion
-//    2. Dominio: Fecha, Persona, Cliente, Empleado, Proveedor, Producto, Venta, Compra
-//    3. Abstracciones (interfaces): IRepositorio, IHasheadorClave, ITipoComprobante,
-//       IMedioPago, IPoliticaDescuento, ICreadorProducto, IFormularioProducto
-//    4. Persistencia: RepositorioCSV (implementa IRepositorio)
-//    5. Servicios de negocio: Catalogo, Gestores, ServicioVentas, ServicioCompras...
-//    6. Interfaz de consola: Vistas y Controladores
-//    7. main(): raiz de composicion (aqui se arman y se conectan todas las piezas)
-// ============================================================================
+
 #include <iostream>
 #include <string>
 #include <vector>
