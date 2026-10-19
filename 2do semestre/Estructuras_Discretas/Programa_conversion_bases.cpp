@@ -64,7 +64,7 @@ int main()  {
                 // Calcular y mostrar la parte fraccionaria
                 if (fraccion > 0) {
                     cout << ".";
-                    int limite_bits = 6; 
+                    int limite_bits = 6;    // maximo de cifras despues del punto, para que no se alargue sin fin
                     
                     while (limite_bits > 0 && fraccion > 0) {
                         fraccion = fraccion * 2;
@@ -352,34 +352,39 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
+                 // Aqui vamos a ir guardando las cifras del resultado, una por una
                 char digitos_entero[40];
-                int cantidad = 0;
-                int temporal_entero = entero;
+                int cantidad = 0;                // cuenta cuantas cifras llevamos guardadas
+                int temporal_entero = entero;    // copia del numero para poder irlo reduciendo
 
                 if (entero == 0) {
                     digitos_entero[cantidad] = '0';
                     cantidad++;
                 }
+                // Dividimos entre 11 una y otra vez. Lo que sobra de cada division
                 while (temporal_entero > 0) {
-                    int digito = temporal_entero % 11;
-                    temporal_entero = temporal_entero / 11;
-                    digitos_entero[cantidad] = simbolos[digito];
+                    int digito = temporal_entero % 11;          // lo que sobra de la division
+                    temporal_entero = temporal_entero / 11;     // lo que queda para seguir dividiendo
+                    digitos_entero[cantidad] = simbolos[digito]; // guardamos la cifra (si es 10 o mas, usa letras: A,B,C,D,E,F.)
                     cantidad++;
                 }
-
+                // Mostramos las cifras desde la ultima hasta la primera,
+                // porque salieron en orden contrario al que se lee el numero
                 cout << "Numero en base 11: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
                     cout << digitos_entero[i];
                 }
-
+                // Si el numero tenia decimales (lo que va despues del punto), los convertimos tambien
                 if (fraccion > 0) {
                     cout << ".";
-                    int limite_digitos = 6;
+                    int limite_digitos = 6;        // maximo de cifras despues del punto, para que no se alargue sin fin
 
                     while (limite_digitos > 0 && fraccion > 0) {
+                        // Multiplicamos por 11: la parte entera que sale es la siguiente cifra
                         fraccion = fraccion * 11;
                         int digito_fraccion = fraccion;
                         cout << simbolos[digito_fraccion];
+                        // Quitamos esa cifra y seguimos con lo que queda
                         fraccion = fraccion - digito_fraccion;
                         limite_digitos--;
                     }
