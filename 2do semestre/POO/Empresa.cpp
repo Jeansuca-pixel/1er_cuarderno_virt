@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,7 +14,7 @@
 #include <ctime>
 #ifdef _WIN32
 #ifndef NOMINMAX
-#define NOMINMAX // evita conflicto con min/max de windows.h
+#define NOMINMAX // evita conflicto con min/max de windows.h                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 #endif
 #include <windows.h>
 #else
@@ -34,7 +33,7 @@ namespace Config {
     const int COMPRAS_PARA_FRECUENTE = 3;
     const string RUC_EMPRESA = "20601234567";
     const string NOMBRE_EMPRESA = "TECH STORE S.A.C.";
-    const string DIRECCION_EMPRESA = "Av. Floral 450 - Puno / Cel: 951-000-111";
+    const string DIRECCION_EMPRESA = "Av. Floral 450 - Puno / Cel: 900-691-089x";
     const string ROL_ADMIN = "ADMIN";
     const string ROL_CAJERO = "CAJERO";
     const string ESTADO_COMPLETADA = "Completada";
