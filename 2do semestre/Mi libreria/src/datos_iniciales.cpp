@@ -3,7 +3,7 @@
 namespace techstore {
 
 void cargar_datos_iniciales(DatosTienda& d, const IHasheadorClave& h) {
-    d.empleados.push_back(Empleado("DNI", "72341122", "Quispe", "Mamani", "Carlos", "951234567", "Av. Floral 120",
+    d.empleados.push_back(Empleado("DNI", "72341122", "Sucari", "Sucari", "Jean Andre", "951234567", "Av. Floral 120",
         "EMP01", "Administrador y Cajero", Config::ROL_ADMIN, Fecha(15, 3, 2024), 1500.0, true, h.hash("admin123")));
     d.empleados.push_back(Empleado("DNI", "70984433", "Condori", "Flores", "Lucia", "952987654", "Jr. Puno 340",
         "EMP02", "Asesora de Ventas", Config::ROL_CAJERO, Fecha(1, 8, 2025), 1600.0, true, h.hash("caja123")));
