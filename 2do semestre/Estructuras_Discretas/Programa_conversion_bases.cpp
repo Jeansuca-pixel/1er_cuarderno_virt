@@ -5,9 +5,7 @@ int main()  {
     char simbolos[] = "0123456789ABCDEF";
 
     do {
-        cout << "--------------------------------------------------------" << endl;
         cout << "Ingrese la base a la que desea convertir un numero " << endl;
-        cout << "--------------------------------------------------------" << endl;
         cout << "1. Decimal a Base 2" << endl;
         cout << "2. Decimal a Base 3" << endl;
         cout << "3. Decimal a Base 4" << endl;
@@ -352,46 +350,43 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
-                 // Aqui vamos a ir guardando las cifras del resultado, una por una
-                char digitos_entero[40];
+                // Aqui vamos guardando las cifras del resultado, una por una (como numeros int)
+                int digitos_entero[15];
                 int cantidad = 0;                // cuenta cuantas cifras llevamos guardadas
                 int temporal_entero = entero;    // copia del numero para poder irlo reduciendo
 
                 if (entero == 0) {
-                    digitos_entero[cantidad] = '0';
+                    digitos_entero[cantidad] = 0;
                     cantidad++;
                 }
-                // Dividimos entre 11 una y otra vez. Lo que sobra de cada division
+                // Dividimos entre 11 una y otra vez. Lo que sobra de cada division es una cifra
                 while (temporal_entero > 0) {
-                    int digito = temporal_entero % 11;          // lo que sobra de la division
-                    temporal_entero = temporal_entero / 11;     // lo que queda para seguir dividiendo
-                    digitos_entero[cantidad] = simbolos[digito]; // guardamos la cifra (si es 10 o mas, usa letras: A,B,C,D,E,F.)
+                    int digito = temporal_entero % 11;
+                    temporal_entero = temporal_entero / 11;
+                    digitos_entero[cantidad] = digito;
                     cantidad++;
                 }
-                // Mostramos las cifras desde la ultima hasta la primera,
-                // porque salieron en orden contrario al que se lee el numero
+                // Mostramos las cifras desde la ultima hasta la primera, separadas por espacio
                 cout << "Numero en base 11: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
-                    cout << digitos_entero[i];
+                    cout << digitos_entero[i] << " ";
                 }
-                // Si el numero tenia decimales (lo que va despues del punto), los convertimos tambien
+                // Si el numero tenia decimales, los convertimos tambien
                 if (fraccion > 0) {
-                    cout << ".";
-                    int limite_digitos = 6;        // maximo de cifras despues del punto, para que no se alargue sin fin
+                    cout << ". ";
+                    int limite_digitos = 6;
 
                     while (limite_digitos > 0 && fraccion > 0) {
-                        // Multiplicamos por 11: la parte entera que sale es la siguiente cifra
                         fraccion = fraccion * 11;
                         int digito_fraccion = fraccion;
-                        cout << simbolos[digito_fraccion];
-                        // Quitamos esa cifra y seguimos con lo que queda
+                        cout << digito_fraccion << " ";
                         fraccion = fraccion - digito_fraccion;
                         limite_digitos--;
                     }
                 }
                 cout << endl;
-
-            }    break;
+                break;
+            }
             case 10:{
                 cout << "Convirtiendo de decimal a base 12 " << endl;
                 double numero;
@@ -401,40 +396,41 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
-                char digitos_entero[40];
+                int digitos_entero[15];
                 int cantidad = 0;
                 int temporal_entero = entero;
 
                 if (entero == 0) {
-                    digitos_entero[cantidad] = '0';
+                    digitos_entero[cantidad] = 0;
                     cantidad++;
                 }
                 while (temporal_entero > 0) {
                     int digito = temporal_entero % 12;
                     temporal_entero = temporal_entero / 12;
-                    digitos_entero[cantidad] = simbolos[digito];
+                    digitos_entero[cantidad] = digito;
                     cantidad++;
                 }
 
                 cout << "Numero en base 12: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
-                    cout << digitos_entero[i];
+                    cout << digitos_entero[i] << " ";
                 }
 
                 if (fraccion > 0) {
-                    cout << ".";
+                    cout << ". ";
                     int limite_digitos = 6;
 
                     while (limite_digitos > 0 && fraccion > 0) {
                         fraccion = fraccion * 12;
                         int digito_fraccion = fraccion;
-                        cout << simbolos[digito_fraccion];
+                        cout << digito_fraccion << " ";
                         fraccion = fraccion - digito_fraccion;
                         limite_digitos--;
                     }
                 }
                 cout << endl;
-            }    break;
+                break;
+            }
             case 11:{
                 cout << "Convirtiendo de decimal a base 13 " << endl;
                 double numero;
@@ -444,34 +440,34 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
-                char digitos_entero[40];
+                int digitos_entero[15];
                 int cantidad = 0;
                 int temporal_entero = entero;
 
                 if (entero == 0) {
-                    digitos_entero[cantidad] = '0';
+                    digitos_entero[cantidad] = 0;
                     cantidad++;
                 }
                 while (temporal_entero > 0) {
                     int digito = temporal_entero % 13;
                     temporal_entero = temporal_entero / 13;
-                    digitos_entero[cantidad] = simbolos[digito];
+                    digitos_entero[cantidad] = digito;
                     cantidad++;
                 }
 
                 cout << "Numero en base 13: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
-                    cout << digitos_entero[i];
+                    cout << digitos_entero[i] << " ";
                 }
 
                 if (fraccion > 0) {
-                    cout << ".";
+                    cout << ". ";
                     int limite_digitos = 6;
 
                     while (limite_digitos > 0 && fraccion > 0) {
                         fraccion = fraccion * 13;
                         int digito_fraccion = fraccion;
-                        cout << simbolos[digito_fraccion];
+                        cout << digito_fraccion << " ";
                         fraccion = fraccion - digito_fraccion;
                         limite_digitos--;
                     }
@@ -488,40 +484,41 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
-                char digitos_entero[40];
+                int digitos_entero[15];
                 int cantidad = 0;
                 int temporal_entero = entero;
 
                 if (entero == 0) {
-                    digitos_entero[cantidad] = '0';
+                    digitos_entero[cantidad] = 0;
                     cantidad++;
                 }
                 while (temporal_entero > 0) {
                     int digito = temporal_entero % 14;
                     temporal_entero = temporal_entero / 14;
-                    digitos_entero[cantidad] = simbolos[digito];
+                    digitos_entero[cantidad] = digito;
                     cantidad++;
                 }
 
                 cout << "Numero en base 14: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
-                    cout << digitos_entero[i];
+                    cout << digitos_entero[i] << " ";
                 }
 
                 if (fraccion > 0) {
-                    cout << ".";
+                    cout << ". ";
                     int limite_digitos = 6;
 
                     while (limite_digitos > 0 && fraccion > 0) {
                         fraccion = fraccion * 14;
                         int digito_fraccion = fraccion;
-                        cout << simbolos[digito_fraccion];
+                        cout << digito_fraccion << " ";
                         fraccion = fraccion - digito_fraccion;
                         limite_digitos--;
                     }
                 }
                 cout << endl;
-            }    break;
+                break;
+            }
             case 13:{
                 cout << "Convirtiendo de decimal a base 15 " << endl;
                 double numero;
@@ -531,34 +528,34 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
-                char digitos_entero[40];
+                int digitos_entero[15];
                 int cantidad = 0;
                 int temporal_entero = entero;
 
                 if (entero == 0) {
-                    digitos_entero[cantidad] = '0';
+                    digitos_entero[cantidad] = 0;
                     cantidad++;
                 }
                 while (temporal_entero > 0) {
                     int digito = temporal_entero % 15;
                     temporal_entero = temporal_entero / 15;
-                    digitos_entero[cantidad] = simbolos[digito];
+                    digitos_entero[cantidad] = digito;
                     cantidad++;
                 }
 
                 cout << "Numero en base 15: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
-                    cout << digitos_entero[i];
+                    cout << digitos_entero[i] << " ";
                 }
 
                 if (fraccion > 0) {
-                    cout << ".";
+                    cout << ". ";
                     int limite_digitos = 6;
 
                     while (limite_digitos > 0 && fraccion > 0) {
                         fraccion = fraccion * 15;
                         int digito_fraccion = fraccion;
-                        cout << simbolos[digito_fraccion];
+                        cout << digito_fraccion << " ";
                         fraccion = fraccion - digito_fraccion;
                         limite_digitos--;
                     }
@@ -575,34 +572,34 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
-                char digitos_entero[40];
+                int digitos_entero[15];
                 int cantidad = 0;
                 int temporal_entero = entero;
 
                 if (entero == 0) {
-                    digitos_entero[cantidad] = '0';
+                    digitos_entero[cantidad] = 0;
                     cantidad++;
                 }
                 while (temporal_entero > 0) {
                     int digito = temporal_entero % 16;
                     temporal_entero = temporal_entero / 16;
-                    digitos_entero[cantidad] = simbolos[digito];
+                    digitos_entero[cantidad] = digito;
                     cantidad++;
                 }
 
                 cout << "Numero en base 16: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
-                    cout << digitos_entero[i];
+                    cout << digitos_entero[i] << " ";
                 }
 
                 if (fraccion > 0) {
-                    cout << ".";
+                    cout << ". ";
                     int limite_digitos = 6;
 
                     while (limite_digitos > 0 && fraccion > 0) {
                         fraccion = fraccion * 16;
                         int digito_fraccion = fraccion;
-                        cout << simbolos[digito_fraccion];
+                        cout << digito_fraccion << " ";
                         fraccion = fraccion - digito_fraccion;
                         limite_digitos--;
                     }
