@@ -1,4 +1,5 @@
 //Alumno:Jean Andre Sucari Chambi           Codigo:260238
+//Hice el 90% la IA me ayudo con un 10% en la comprension 
 #include <iostream>
 using namespace std;
 // 1. El Factorial de un número n   n*n!
