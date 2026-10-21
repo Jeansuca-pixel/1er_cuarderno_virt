@@ -2,8 +2,6 @@
 using namespace std;
 int main()  {
     int opcion;
-    char simbolos[] = "0123456789ABCDEF";
-
     do {
         cout << "Ingrese la base a la que desea convertir un numero " << endl;
         cout << "1. Decimal a Base 2" << endl;
