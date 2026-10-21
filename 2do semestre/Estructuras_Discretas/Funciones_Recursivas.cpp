@@ -1,3 +1,4 @@
+//Alumno:Jean Andre Sucari Chambi           Codigo:260238
 #include <iostream>
 using namespace std;
 // 1. El Factorial de un número n   n*n!
@@ -24,7 +25,7 @@ double numeroHarmonico(int k) {
     if (k == 1) {
         return 1.0;
     }
-    return (1 / k) + numeroHarmonico(k - 1);
+    return (1.0 / k) + numeroHarmonico(k - 1);
 }
 void imprimirHarmonicos(int n, int actual = 1) {
     if (actual > n) return;
@@ -55,8 +56,9 @@ void imprimirLucas(int n, int actual = 0) {
 }
 
 int main() {
-    int n = 4; 
-    cout << "  EJERCICIOS DE RECURSIVIDAD EN C++"<< endl;
+    int n = 0 ;
+    cout <<"Ingrese el numero que desees, el numero se utilizara para todos casos" << endl;  
+    cin >> n;
     // 1. Factorial
     cout << "1. Factorial de " << n << ":"<< endl;
     cout << n << "! = " << factorial(n) << endl;
