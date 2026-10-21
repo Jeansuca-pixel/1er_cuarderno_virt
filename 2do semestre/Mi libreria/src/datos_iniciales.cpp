@@ -5,7 +5,7 @@ namespace techstore {
 void cargar_datos_iniciales(DatosTienda& d, const IHasheadorClave& h) {
     d.empleados.push_back(Empleado("DNI", "72341122", "Sucari", "Sucari", "Jean Andre", "951234567", "Av. Floral 120",
         "EMP01", "Administrador y Cajero", Config::ROL_ADMIN, Fecha(15, 3, 2024), 1500.0, true, h.hash("admin123")));
-    d.empleados.push_back(Empleado("DNI", "70984433", "Condori", "Flores", "Lucia", "952987654", "Jr. Puno 340",
+    d.empleados.push_back(Empleado("DNI", "70984433", "Quillimamani", "Huamantuma", "Franklin", "952987654", "Jr. Puno 340",
         "EMP02", "Asesora de Ventas", Config::ROL_CAJERO, Fecha(1, 8, 2025), 1600.0, true, h.hash("caja123")));
     d.proveedores.push_back(Proveedor("20100106963", "Grupo Deltron S.A.", "Ing. Marco Ramos", "01-4150100", "Av. Manuel Echeandia 904, Lima", true));
     d.proveedores.push_back(Proveedor("20254139943", "Ingram Micro Peru S.A.C.", "Lic. Elena Ruiz", "01-6169000", "Av. Rivera Navarrete 501, San Isidro", true));
