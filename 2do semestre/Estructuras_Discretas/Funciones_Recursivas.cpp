@@ -42,7 +42,7 @@ void imprimirFibonacci(int n, int actual = 0) {
     cout << fibonacci(actual) << " ";
     imprimirFibonacci(n, actual + 1);
 }
-// 5. Números Lucas a partir de números Fibonacci (L_k = F_{k-1} + F_{k+1})
+// 5. Números Lucas a partir de números Fibonacci 2,1,3,4,7....
 int numeroLucas(int k) {
     if (k == 0) return 2;
     if (k == 1) return 1;
