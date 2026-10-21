@@ -57,12 +57,12 @@ int main()  {
                 if (entero == 0) {
                     base2_entero = 0;
                 }
-                // Mostrar la parte entera
+
                 cout << "Numero en base 2: " << base2_entero;
                 // Calcular y mostrar la parte fraccionaria
                 if (fraccion > 0) {
                     cout << ".";
-                    int limite_bits = 6;    // maximo de cifras despues del punto, para que no se alargue sin fin
+                    int limite_bits = 6;   
                     
                     while (limite_bits > 0 && fraccion > 0) {
                         fraccion = fraccion * 2;
@@ -350,30 +350,29 @@ int main()  {
                 int entero = numero;
                 double fraccion = numero - entero;
 
-                // Aqui vamos guardando las cifras del resultado, una por una (como numeros int)
+
                 int digitos_entero[15];
-                int cantidad = 0;                // cuenta cuantas cifras llevamos guardadas
-                int temporal_entero = entero;    // copia del numero para poder irlo reduciendo
+                int cantidad = 0;                
+                int temporal_entero = entero;    
 
                 if (entero == 0) {
                     digitos_entero[cantidad] = 0;
                     cantidad++;
                 }
-                // Dividimos entre 11 una y otra vez. Lo que sobra de cada division es una cifra
+
                 while (temporal_entero > 0) {
                     int digito = temporal_entero % 11;
                     temporal_entero = temporal_entero / 11;
                     digitos_entero[cantidad] = digito;
                     cantidad++;
                 }
-                // Mostramos las cifras desde la ultima hasta la primera, separadas por espacio
+
                 cout << "Numero en base 11: ";
                 for (int i = cantidad - 1; i >= 0; i--) {
                     cout << digitos_entero[i] << " ";
                 }
-                // Si el numero tenia decimales, los convertimos tambien
                 if (fraccion > 0) {
-                    cout << ". ";
+                    cout << ".";
                     int limite_digitos = 6;
 
                     while (limite_digitos > 0 && fraccion > 0) {
